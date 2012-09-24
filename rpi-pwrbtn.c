@@ -29,15 +29,16 @@
 #include <avr/io.h>
 #include <avr/power.h>
 #include <avr/sleep.h>
+
 #include <util/delay.h>
 
 #include "common/defs.h"
 
-static const uint8_t BTN        = DDB0;
-static const uint8_t LED        = DDB5;
-static const uint8_t RPI_READY  = DDD3;
-static const uint8_t RPI_PWR    = DDD2;
-static const uint8_t RPI_PWROFF = DDD4;
+static const uint8_t BTN     = DDB2;
+static const uint8_t LED     = DDB1;
+static const uint8_t RPI_PWR = DDB0;
+static const uint8_t RPI_IN  = DDB3;
+static const uint8_t RPI_OUT = DDB4;
 
 static const uint8_t BOOT_TIMEOUT     = 40; /* seconds */
 static const uint8_t SHUTDOWN_TIMEOUT = 40; /* seconds */
@@ -56,6 +57,7 @@ struct
 	state_t  state;
 	uint16_t timer;
 	uint8_t  seconds;
+	uint8_t  pinb;
 } data;
 
 /****************************************************************************/
@@ -134,23 +136,23 @@ state_change(state_t new_state)
 	switch(data.state) {
 	case boot_state:
 		LOW(PORTB, LED);
-		LOW(PORTD, RPI_PWR);
-		LOW(PORTD, RPI_PWROFF);
+		LOW(PORTB, RPI_PWR);
+		LOW(PORTB, RPI_OUT);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
 	case shutdown_state:
-		HIGH(PORTD, RPI_PWROFF);
+		HIGH(PORTB, RPI_OUT);
 		LOW(PORTB,  LED);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
 	case poweroff_state:
-		HIGH(PORTD, RPI_PWR);
+		HIGH(PORTB, RPI_PWR);
 		LOW(PORTB,  LED);
-		LOW(PORTD,  RPI_PWROFF);
+		LOW(PORTB,  RPI_OUT);
 		break;
 
 	case idle_state:
@@ -169,11 +171,8 @@ setup(void)
 	/* turn off interrupts */
 	cli();
 
-	/* defaults */
 	DDRB  = 0b00000000;
-	DDRD  = 0b00000000;
 	PORTB = 0b00000000;
-	PORTD = 0b00000000;
 
 	/*
 	 * Power Indicator LED
@@ -188,45 +187,39 @@ setup(void)
 	LOW(PORTB, BTN);
 
 	/*
-	 * RPI Power On Pin
+	 * RPI Power Pin
 	 */
-	OUT(DDRD,   RPI_PWR);
-	HIGH(PORTD, RPI_PWR);
+	OUT(DDRB,   RPI_PWR);
+	HIGH(PORTB, RPI_PWR);
 
 	/*
-	 * RPI Power Off Pin
+	 * RPI OUT Pin
 	 */
-	OUT(DDRD,  RPI_PWROFF);
-	LOW(PORTD, RPI_PWROFF);
+	OUT(DDRB,  RPI_OUT);
+	LOW(PORTB, RPI_OUT);
 
 	/*
-	 * RPI Ready Pin
+	 * RPI IN Pin
 	 */
-	IN(DDRD,   RPI_READY);
-	LOW(PORTD, RPI_READY);
+	IN(DDRB,   RPI_IN);
+	LOW(PORTB, RPI_IN);
 
-	/* Handle External Interrupt for BTN */
-	PCICR  |= _BV(PCIE0);
-	PCMSK0 |= _BV(PCINT0);
-
-	/* Handle External Interrupt for RPI BOOT */
-	EICRA |= _BV(ISC10) | _BV(ISC11);
-	EIMSK |= _BV(INT1);
+	/* Handle External Interrupts */
+	GIMSK |= _BV(PCIE);
+	PCMSK |= _BV(PCINT2) | _BV(PCINT3);
 
 	/*
 	 * power save settings
 	 */
 	power_adc_disable();
-	power_spi_disable();
-	power_twi_disable();
-	power_usart0_disable();
 	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
 	/* initialize data struct */
 	data.state = unknown_state;
 	data.timer = 0;
 	data.seconds = 0;
-
+	data.pinb = PINB;
+	
 	/* enable interrupts */
 	sei();
 
@@ -258,45 +251,41 @@ loop(void)
 }
 
 /*
- * Power button was pressed
+ * Interrupt Handler
  */
 ISR(PCINT0_vect)
 {
-	if (0 == (PINB & _BV(BTN)))
-		return;
+	const uint8_t pin_change = PINB ^ data.pinb;
+	data.pinb = PINB;
 
-	switch (data.state) {
-	case idle_state:
-		state_change(shutdown_state);
-		break;
+	if (pin_change & _BV(RPI_IN) && PINB & _BV(RPI_IN))
+		switch (data.state) {
+		case boot_state:
+			/* force boot timeout */
+			data.seconds = BOOT_TIMEOUT;
+			break;
 
-	case poweroff_state:
-		state_change(boot_state);
-		break;
+		case idle_state:
+		case poweroff_state:
+		case shutdown_state:
+		case unknown_state:
+		default: break;
+		}
 
-	case boot_state:
-	case shutdown_state:
-	case unknown_state:
-	default: break;
-	}
-}
+	if (pin_change & _BV(BTN) && PINB & _BV(BTN))
+		switch (data.state) {
+		case idle_state:
+			state_change(shutdown_state);
+			break;
 
-/*
- * RPI has finished booting
- */
-ISR(INT1_vect)
-{
-	switch (data.state) {
-	case boot_state:
-		/* force boot timeout */
-		data.seconds = BOOT_TIMEOUT;
-		break;
+		case poweroff_state:
+			state_change(boot_state);
+			break;
 
-	case idle_state:
-	case poweroff_state:
-	case shutdown_state:
-	case unknown_state:
-	default: break;
-	}
+		case boot_state:
+		case shutdown_state:
+		case unknown_state:
+		default: break;
+		}
 }
 

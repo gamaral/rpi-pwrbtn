@@ -1,22 +1,23 @@
 BASE    := ..
 
 TARGET  := rpi-pwrbtn
-SRCS    := $(TARGET).c $(BASE)/common/main.c
+SRCS    := $(TARGET).c common/main.c
 OBJS    := $(SRCS:.c=.o)
 
 CC      := avr-gcc
 OBJCOPY := avr-objcopy
 AVRDUDE := avrdude
 
-#CFLAGS := -Os -ffunction-sections -fdata-sections -mmcu=atmega328p -DF_CPU=16000000UL -I$(BASE) # Arduino
-CFLAGS  := -Os -ffunction-sections -fdata-sections -mmcu=atmega328p -DF_CPU=8000000UL  -I$(BASE) # Generic & Arduino
-LDFLAGS := -Os -Wl,--gc-sections -mmcu=atmega328p -lm
-ADFLAGS := -p m328p -c avrisp2 -P usb -v
+#CLOCK  := 8000000UL
+CLOCK   := 1000000UL
+CFLAGS  := -Os -ffunction-sections -fdata-sections -mmcu=attiny85 -DF_CPU=$(CLOCK) -I$(BASE)
+LDFLAGS := -Os -Wl,--gc-sections -mmcu=attiny85 -lm
+ADFLAGS := -p t85 -c avrisp2 -P usb -v
 
-all: $(TARGET).hex
+all: $(TARGET).hex $(TARGET).eep.hex
 	@true
 
-$(TARGET): $(TARGET).hex
+$(TARGET): $(TARGET).hex $(TARGET).eep.hex
 	@true
 
 $(TARGET).elf: $(OBJS)
@@ -25,14 +26,17 @@ $(TARGET).elf: $(OBJS)
 $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
-flash: $(TARGET).hex
+$(TARGET).eep.hex: $(TARGET).elf
+	$(OBJCOPY) -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 $< $@
+
+flash: $(TARGET).hex $(TARGET).eep.hex
 	@echo Flashing $(TARGET).hex
-#	$(AVRDUDE) $(ADFLAGS) -e -U lock:w:0x3F:m -U lfuse:w:0xFF:m -U hfuse:w:0xD9:m -U efuse:w:0x05:m # Arduino
-	$(AVRDUDE) $(ADFLAGS) -e -U lock:w:0x3F:m -U lfuse:w:0xE2:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m # Generic & Arduino
-	$(AVRDUDE) $(ADFLAGS) -U flash:w:$<
+	$(AVRDUDE) $(ADFLAGS) -e -U lfuse:w:0x62:m -U hfuse:w:0xDF:m -U efuse:w:0xFF:m # 1 MHz
+	#$(AVRDUDE) $(ADFLAGS) -e -U lfuse:w:0xE2:m -U hfuse:w:0xDF:m -U efuse:w:0xFF:m # 8 MHz
+	$(AVRDUDE) $(ADFLAGS) -U flash:w:$(TARGET).hex -U eeprom:w:$(TARGET).eep.hex
 
 clean:
-	-$(RM) $(OBJS) $(TARGET).elf $(TARGET).hex
+	-$(RM) $(OBJS) $(TARGET).elf $(TARGET).hex $(TARGET).eep.hex
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
