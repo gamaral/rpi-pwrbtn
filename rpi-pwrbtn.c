@@ -24,6 +24,8 @@
  * DAMAGE.
  */
 
+#define __DELAY_BACKWARD_COMPATIBLE__
+
 #include <avr/cpufunc.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -34,9 +36,9 @@
 
 #include "common/defs.h"
 
-static const uint8_t BTN     = DDB2;
-static const uint8_t LED     = DDB1;
-static const uint8_t RPI_PWR = DDB0;
+static const uint8_t RPI_USR = DDB0;
+static const uint8_t RPI_LED = DDB2;
+static const uint8_t RPI_PWR = DDB1;
 static const uint8_t RPI_IN  = DDB3;
 static const uint8_t RPI_OUT = DDB4;
 
@@ -66,7 +68,7 @@ static void boot_tick(void);
 static void shutdown_tick(void);
 static void bork_tick(void);
 
-static void delay(uint16_t msecs);
+static void delay(const uint16_t msecs);
 static void state_change(state_t new_state);
 
 /****************************************************************************/
@@ -75,7 +77,7 @@ void
 boot_tick(void)
 #define BOOT_TICK 200
 {
-	TOGGLE(PORTB, LED);
+	TOGGLE(PORTB, RPI_LED);
 	delay(BOOT_TICK);
 
 	if (data.seconds >= BOOT_TIMEOUT)
@@ -86,7 +88,7 @@ void
 shutdown_tick(void)
 #define SHUTDOWN_TICK 500
 {
-	TOGGLE(PORTB, LED);
+	TOGGLE(PORTB, RPI_LED);
 	delay(SHUTDOWN_TICK);
 
 	if (data.seconds >= SHUTDOWN_TIMEOUT)
@@ -97,14 +99,14 @@ void
 bork_tick(void)
 #define BORK_TICK 10
 {
-	TOGGLE(PORTB, LED);
+	TOGGLE(PORTB, RPI_LED);
 	DELAY(BORK_TICK);
-	TOGGLE(PORTB, LED);
+	TOGGLE(PORTB, RPI_LED);
 	DELAY(BORK_TICK * 2);
 }
 
 void
-delay(uint16_t msecs)
+delay(const uint16_t msecs)
 #define SECOND 1000
 {
 	switch(data.state) {
@@ -135,28 +137,28 @@ state_change(state_t new_state)
 
 	switch(data.state) {
 	case boot_state:
-		LOW(PORTB, LED);
-		LOW(PORTB, RPI_PWR);
-		LOW(PORTB, RPI_OUT);
+		HIGH(PORTB, RPI_PWR);
+		LOW(PORTB,  RPI_LED);
+		LOW(PORTB,  RPI_OUT);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
 	case shutdown_state:
+		LOW(PORTB,  RPI_LED);
 		HIGH(PORTB, RPI_OUT);
-		LOW(PORTB,  LED);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
 	case poweroff_state:
-		HIGH(PORTB, RPI_PWR);
-		LOW(PORTB,  LED);
-		LOW(PORTB,  RPI_OUT);
+		LOW(PORTB, RPI_PWR);
+		LOW(PORTB, RPI_LED);
+		LOW(PORTB, RPI_OUT);
 		break;
 
 	case idle_state:
-		HIGH(PORTB, LED);
+		HIGH(PORTB, RPI_LED);
 		break;
 
 	default: break;
@@ -175,22 +177,22 @@ setup(void)
 	PORTB = 0b00000000;
 
 	/*
-	 * Power Indicator LED
+	 * Power Indicator RPI_LED
 	 */
-	OUT(DDRB,  LED);
-	LOW(PORTB, LED);
+	OUT(DDRB,  RPI_LED);
+	LOW(PORTB, RPI_LED);
 
 	/*
-	 * Power BTN Pin
+	 * Power RPI_USR Pin
 	 */
-	IN(DDRB,   BTN);
-	LOW(PORTB, BTN);
+	IN(DDRB,    RPI_USR);
+	HIGH(PORTB, RPI_USR);
 
 	/*
 	 * RPI Power Pin
 	 */
-	OUT(DDRB,   RPI_PWR);
-	HIGH(PORTB, RPI_PWR);
+	OUT(DDRB,  RPI_PWR);
+	LOW(PORTB, RPI_PWR);
 
 	/*
 	 * RPI OUT Pin
@@ -206,7 +208,7 @@ setup(void)
 
 	/* Handle External Interrupts */
 	GIMSK |= _BV(PCIE);
-	PCMSK |= _BV(PCINT2) | _BV(PCINT3);
+	PCMSK |= _BV(PCINT0) | _BV(PCINT3);
 
 	/*
 	 * power save settings
@@ -258,21 +260,31 @@ ISR(PCINT0_vect)
 	const uint8_t pin_change = PINB ^ data.pinb;
 	data.pinb = PINB;
 
-	if (pin_change & _BV(RPI_IN) && PINB & _BV(RPI_IN))
+	/*
+	 * Power Button Pressed
+	 */
+	if (pin_change & _BV(RPI_IN))
 		switch (data.state) {
 		case boot_state:
 			/* force boot timeout */
-			data.seconds = BOOT_TIMEOUT;
+			if (PINB & _BV(RPI_IN) != 0)
+				data.seconds = BOOT_TIMEOUT;
 			break;
 
 		case idle_state:
+			if (PINB & _BV(RPI_IN) == 0)
+				state_change(shutdown_state);
+			break;
 		case poweroff_state:
 		case shutdown_state:
 		case unknown_state:
 		default: break;
 		}
 
-	if (pin_change & _BV(BTN) && PINB & _BV(BTN))
+	/*
+	 * Power Button Pressed
+	 */
+	if (pin_change & _BV(RPI_USR) && (PINB & _BV(RPI_USR)) == 0)
 		switch (data.state) {
 		case idle_state:
 			state_change(shutdown_state);

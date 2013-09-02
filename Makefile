@@ -32,7 +32,6 @@ $(TARGET).eep.hex: $(TARGET).elf
 flash: $(TARGET).hex $(TARGET).eep.hex
 	@echo Flashing $(TARGET).hex
 	$(AVRDUDE) $(ADFLAGS) -e -U lfuse:w:0x62:m -U hfuse:w:0xDF:m -U efuse:w:0xFF:m # 1 MHz
-	#$(AVRDUDE) $(ADFLAGS) -e -U lfuse:w:0xE2:m -U hfuse:w:0xDF:m -U efuse:w:0xFF:m # 8 MHz
 	$(AVRDUDE) $(ADFLAGS) -U flash:w:$(TARGET).hex -U eeprom:w:$(TARGET).eep.hex
 
 clean:
