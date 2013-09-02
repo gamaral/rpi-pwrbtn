@@ -1,7 +1,7 @@
 BASE    := ..
 
 TARGET  := rpi-pwrbtn
-SRCS    := $(TARGET).c common/main.c
+SRCS    := $(TARGET).c
 OBJS    := $(SRCS:.c=.o)
 
 CC      := avr-gcc

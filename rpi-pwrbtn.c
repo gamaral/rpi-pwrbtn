@@ -34,8 +34,6 @@
 
 #include <util/delay.h>
 
-#include "common/defs.h"
-
 static const uint8_t RPI_USR = DDB0;
 static const uint8_t RPI_LED = DDB2;
 static const uint8_t RPI_PWR = DDB1;
@@ -44,6 +42,24 @@ static const uint8_t RPI_OUT = DDB4;
 
 static const uint8_t BOOT_TIMEOUT     = 40; /* seconds */
 static const uint8_t SHUTDOWN_TIMEOUT = 40; /* seconds */
+
+#define HIGH(PORT, BIT) \
+	PORT |= _BV(BIT)
+#define OUT(PORT, BIT) HIGH(PORT, BIT)
+#define ON(PORT, BIT) HIGH(PORT, BIT)
+
+#define LOW(PORT, BIT) \
+	PORT &= ~_BV(BIT)
+#define IN(PORT, BIT) LOW(PORT, BIT)
+#define OFF(PORT, BIT) LOW(PORT, BIT)
+
+#define TOGGLE(PORT, BIT) \
+	PORT ^= _BV(BIT)
+
+#define ISSET(PORT, BIT) \
+	(_BV(BIT) == (PORT & _BV(BIT)))
+#define ISCLR(PORT, BIT) \
+	(0 == (PORT & _BV(BIT)))
 
 typedef enum __state_t
 {
@@ -100,9 +116,9 @@ bork_tick(void)
 #define BORK_TICK 10
 {
 	TOGGLE(PORTB, RPI_LED);
-	DELAY(BORK_TICK);
+	_delay_ms(BORK_TICK);
 	TOGGLE(PORTB, RPI_LED);
-	DELAY(BORK_TICK * 2);
+	_delay_ms(BORK_TICK * 2);
 }
 
 void
@@ -115,7 +131,7 @@ delay(const uint16_t msecs)
 		/*
 		 * process timer and second
 		 */
-		DELAY(msecs);
+		_delay_ms(msecs);
 		data.timer += msecs;
 		if (data.timer >= SECOND) {
 			++data.seconds;
@@ -126,7 +142,7 @@ delay(const uint16_t msecs)
 	case idle_state:
 	case poweroff_state:
 	case unknown_state:
-	default: DELAY(msecs);
+	default: _delay_ms(msecs);
 	}
 }
 
@@ -252,6 +268,17 @@ loop(void)
 	}
 }
 
+void
+main(void)
+{
+	setup();
+
+	/*
+	 * Main Loop
+	 */
+	for(;;) loop();
+}
+
 /*
  * Interrupt Handler
  */
@@ -263,16 +290,16 @@ ISR(PCINT0_vect)
 	/*
 	 * Power Button Pressed
 	 */
-	if (pin_change & _BV(RPI_IN))
+	if (ISSET(pin_change, RPI_IN))
 		switch (data.state) {
 		case boot_state:
 			/* force boot timeout */
-			if (PINB & _BV(RPI_IN) != 0)
+			if (ISCLR(PINB, RPI_IN))
 				data.seconds = BOOT_TIMEOUT;
 			break;
 
 		case idle_state:
-			if (PINB & _BV(RPI_IN) == 0)
+			if (ISSET(PINB, RPI_IN))
 				state_change(shutdown_state);
 			break;
 		case poweroff_state:
@@ -284,7 +311,7 @@ ISR(PCINT0_vect)
 	/*
 	 * Power Button Pressed
 	 */
-	if (pin_change & _BV(RPI_USR) && (PINB & _BV(RPI_USR)) == 0)
+	if (ISSET(pin_change, RPI_USR) && ISCLR(PINB, RPI_USR))
 		switch (data.state) {
 		case idle_state:
 			state_change(shutdown_state);
