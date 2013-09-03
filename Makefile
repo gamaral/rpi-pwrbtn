@@ -1,6 +1,6 @@
 BASE    := ..
 
-TARGET  := rpi-pwrbtn
+TARGET  := main
 SRCS    := $(TARGET).c
 OBJS    := $(SRCS:.c=.o)
 
