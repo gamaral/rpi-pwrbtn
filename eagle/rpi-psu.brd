@@ -133,7 +133,7 @@
 <text x="30.48" y="8.255" size="1.778" layer="25" font="vector" ratio="15" rot="R180" align="center">PSU</text>
 <text x="6.35" y="36.83" size="1.6764" layer="25" ratio="15" align="center">V5</text>
 <text x="31.75" y="15.875" size="1.27" layer="25" ratio="15" align="center">^_^</text>
-<text x="6.35" y="24.765" size="1.016" layer="25" ratio="10" rot="R180" align="center">TIP127</text>
+<text x="6.35" y="24.765" size="1.016" layer="25" ratio="10" rot="R180" align="center">TIP125</text>
 <text x="37.719" y="35.56" size="1.016" layer="25" ratio="10" rot="R90" align="center">LD33V</text>
 <text x="19.05" y="29.972" size="0.6096" layer="21" ratio="20" align="center">EBC</text>
 </plain>
