@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Guillermo A. Amaral B. All rights reserved.
+ * Copyright 2012-2013 Guillermo A. Amaral B. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -33,6 +33,8 @@
 #include <avr/sleep.h>
 
 #include <util/delay.h>
+
+#define REVISION 3
 
 static const uint8_t RPI_USR = DDB0;
 static const uint8_t RPI_LED = DDB2;
@@ -154,27 +156,27 @@ state_change(state_t new_state)
 	switch(data.state) {
 	case boot_state:
 		HIGH(PORTB, RPI_PWR);
-		LOW(PORTB,  RPI_LED);
+		HIGH(PORTB, RPI_LED);
 		LOW(PORTB,  RPI_OUT);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
 	case shutdown_state:
-		LOW(PORTB,  RPI_LED);
+		HIGH(PORTB, RPI_LED);
 		HIGH(PORTB, RPI_OUT);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
 	case poweroff_state:
-		LOW(PORTB, RPI_PWR);
-		LOW(PORTB, RPI_LED);
-		LOW(PORTB, RPI_OUT);
+		LOW(PORTB,  RPI_PWR);
+		HIGH(PORTB, RPI_LED);
+		LOW(PORTB,  RPI_OUT);
 		break;
 
 	case idle_state:
-		HIGH(PORTB, RPI_LED);
+		LOW(PORTB, RPI_LED);
 		break;
 
 	default: break;
@@ -195,8 +197,8 @@ setup(void)
 	/*
 	 * Power Indicator RPI_LED
 	 */
-	OUT(DDRB,  RPI_LED);
-	LOW(PORTB, RPI_LED);
+	OUT(DDRB,   RPI_LED);
+	HIGH(PORTB, RPI_LED);
 
 	/*
 	 * Power RPI_USR Pin

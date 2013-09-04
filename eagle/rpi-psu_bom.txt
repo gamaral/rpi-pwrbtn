@@ -1,16 +1,23 @@
-Part    Value     Device          Package
-C1      100nF     C-US050-024X044 C050-024X044
-C2      10µF      CPOL-USE2,5-6E  E2,5-6E
-C3      100nF     C-US050-024X044 C050-024X044
-IC1     LD117AV33 LD117AV33       TO220L1
-IC2     TINY85P   TINY85P         DIL08
-PWR-LED RED       LED5MM          LED5MM
-Q1      TIP125    TIP125          TO220AH
-R1      10k       R-EU_0204/7     0204/7
-R2      330R      R-EU_0204/7     0204/7
-R3      240k      R-EU_0204/7     0204/7
-R5      6k2       R-EU_0204/7     0204/7
-R6      62k       R-EU_0204/7     0204/7
-RESET-B RESET     10-XX           B3F-10XX
-S1      PWR       10-XX           B3F-10XX
-T1      2N2222    2N2222          TO18
+Partlist exported from /home/gamaral/eagle/rpi-psu/eagle/rpi-psu.sch at 9/4/13 7:46 AM
+
+Part       Value     Device          Package      Description                                                   
+C1         100nF     C-US050-024X044 C050-024X044 CAPACITOR, American symbol                                    
+C2         10µF      CPOL-USE2,5-6E  E2,5-6E      POLARIZED CAPACITOR, American symbol                          
+C3         100nF     C-US050-024X044 C050-024X044 CAPACITOR, American symbol                                    
+IC1        LD117AV33 LD117AV33       TO220L1      Low drop fixed and adjustable positive voltage regulators 1 A 
+IC2        TINY85P   TINY85P         DIL08        AVR ATtiny85 MICROCONTROLLER                                  
+ICSP                 PINHD-2X3       2X03         PIN HEADER                                                    
+J1                   DCJ0303         DCJ0303      DC POWER JACK                                                 
+Q1         TIP125    TIP125          TO220AH      PNP DARLINGTON TRANSISTOR                                     
+R1         10k       R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+R2         330R      R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+R3         240k      R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+R4         10k       R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+R5         6k2       R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+R6         62k       R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+R7         10k       R-EU_0207/10    0207/10      RESISTOR, European symbol                                     
+RPI                  PINHD-2X13      2X13         PIN HEADER                                                    
+SJ1                  SJ-BRIDGED      SJ-BRIDGED   Solder Jumper - Bridged                                       
+STATUS-LED           LED5MM          LED5MM       LED                                                           
+SW1                  10-XX           B3F-10XX     OMRON SWITCH                                                  
+T1         2N2222A   -NPN-TO92-EBC   TO92-EBC     NPN Transistror                                               
