@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 ###############################################################################
-# Copyright 2012 Guillermo A. Amaral B. All rights reserved.
+# Copyright 2012-2013 Guillermo A. Amaral B. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,20 @@
 #
 ## INSTALL ####################################################################
 #
+# Simply run as this script as a daemon on system start.
+#
+# Here's an example of how you could do just that on target.
+#
 # su # become root
-# cp rpi-pwrbtn_client.sh /usr/local/bin
-# chmod 700 /usr/local/bin/rpi-pwrbtn_client.sh
-# echo "P0:2:once:/usr/local/bin/rpi-pwrbtn_client.sh" >> /etc/inittab
+# cp rpi-psu_client.sh /usr/local/bin
+# chmod 700 /usr/local/bin/rpi-psu_client.sh
+# echo "null::once:/root/rpi-psu_client.sh" >> /etc/inittab
 #
 ###############################################################################
 
 # Pin defs
-RPI_READY=23
-RPI_SHUTDOWN=24
+RPI_SHUTDOWN=23
+RPI_READY=24
 
 # RPI Shutdown Pin
 echo ${RPI_SHUTDOWN} > /sys/class/gpio/export
@@ -53,4 +57,4 @@ while [ `cat /sys/class/gpio/gpio${RPI_SHUTDOWN}/value` -lt 1 ]; do
 done
 
 # Shutdown RPI
-shutdown -Ph now
+shutdown -Ph now || poweroff
