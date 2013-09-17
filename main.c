@@ -34,7 +34,9 @@
 
 #include <util/delay.h>
 
-#define REVISION 3
+#ifndef REVISION
+#  define REVISION 3
+#endif
 
 static const uint8_t RPI_USR = DDB0;
 static const uint8_t RPI_LED = DDB2;
@@ -42,8 +44,8 @@ static const uint8_t RPI_PWR = DDB1;
 static const uint8_t RPI_IN  = DDB3;
 static const uint8_t RPI_OUT = DDB4;
 
-static const uint8_t BOOT_TIMEOUT     = 40; /* seconds */
-static const uint8_t SHUTDOWN_TIMEOUT = 40; /* seconds */
+static const uint8_t BOOT_TIMEOUT     = 30; /* seconds */
+static const uint8_t SHUTDOWN_TIMEOUT = 30; /* seconds */
 
 #define HIGH(PORT, BIT) \
 	PORT |= _BV(BIT)
@@ -156,14 +158,33 @@ state_change(state_t new_state)
 	switch(data.state) {
 	case boot_state:
 		HIGH(PORTB, RPI_PWR);
+#if REVISION < 3
+		LOW(PORTB,  RPI_LED);
+#else
 		HIGH(PORTB, RPI_LED);
+#endif
 		LOW(PORTB,  RPI_OUT);
 		data.timer   = 0;
 		data.seconds = 0;
 		break;
 
-	case shutdown_state:
+	case idle_state:
+		HIGH(PORTB, RPI_PWR);
+#if REVISION < 3
 		HIGH(PORTB, RPI_LED);
+#else
+		LOW(PORTB,  RPI_LED);
+#endif
+		LOW(PORTB,  RPI_OUT);
+		break;
+
+	case shutdown_state:
+		HIGH(PORTB, RPI_PWR);
+#if REVISION < 3
+		LOW(PORTB,  RPI_LED);
+#else
+		HIGH(PORTB, RPI_LED);
+#endif
 		HIGH(PORTB, RPI_OUT);
 		data.timer   = 0;
 		data.seconds = 0;
@@ -171,12 +192,12 @@ state_change(state_t new_state)
 
 	case poweroff_state:
 		LOW(PORTB,  RPI_PWR);
+#if REVISION < 3
+		LOW(PORTB,  RPI_LED);
+#else
 		HIGH(PORTB, RPI_LED);
+#endif
 		LOW(PORTB,  RPI_OUT);
-		break;
-
-	case idle_state:
-		LOW(PORTB, RPI_LED);
 		break;
 
 	default: break;
@@ -186,8 +207,12 @@ state_change(state_t new_state)
 /****************************************************************************/
 
 void
-setup(void)
+main(void)
 {
+	/*
+	 * Setup
+	 */
+
 	/* turn off interrupts */
 	cli();
 
@@ -198,7 +223,11 @@ setup(void)
 	 * Power Indicator RPI_LED
 	 */
 	OUT(DDRB,   RPI_LED);
+#if REVISION < 3
+	LOW(PORTB, RPI_LED);
+#else
 	HIGH(PORTB, RPI_LED);
+#endif
 
 	/*
 	 * Power RPI_USR Pin
@@ -221,8 +250,8 @@ setup(void)
 	/*
 	 * RPI IN Pin
 	 */
-	IN(DDRB,   RPI_IN);
-	LOW(PORTB, RPI_IN);
+	IN(DDRB,    RPI_IN);
+	HIGH(PORTB, RPI_IN);
 
 	/* Handle External Interrupts */
 	GIMSK |= _BV(PCIE);
@@ -240,15 +269,15 @@ setup(void)
 	data.seconds = 0;
 	data.pinb = PINB;
 	
+	state_change(poweroff_state);
+
 	/* enable interrupts */
 	sei();
 
-	state_change(poweroff_state);
-}
-
-void
-loop(void)
-{
+	/*
+	 * Main Loop
+	 */
+	for(;;)
 	switch(data.state) {
 	case boot_state:
 		boot_tick();
@@ -270,17 +299,6 @@ loop(void)
 	}
 }
 
-void
-main(void)
-{
-	setup();
-
-	/*
-	 * Main Loop
-	 */
-	for(;;) loop();
-}
-
 /*
  * Interrupt Handler
  */
@@ -290,43 +308,69 @@ ISR(PCINT0_vect)
 	data.pinb = PINB;
 
 	/*
-	 * Power Button Pressed
+	 * Raspberry Pi - Status Change
 	 */
-	if (ISSET(pin_change, RPI_IN))
-		switch (data.state) {
-		case boot_state:
-			/* force boot timeout */
-			if (ISCLR(PINB, RPI_IN))
-				data.seconds = BOOT_TIMEOUT;
-			break;
+	if (ISSET(pin_change, RPI_IN)) {
+		/*
+		 * On
+		 */
+		if (ISCLR(PINB, RPI_IN)) {
+			switch (data.state) {
+			case boot_state:
+				data.seconds = BOOT_TIMEOUT; // force boot timeout
+				break;
 
-		case idle_state:
-			if (ISSET(PINB, RPI_IN))
-				state_change(shutdown_state);
-			break;
-		case poweroff_state:
-		case shutdown_state:
-		case unknown_state:
-		default: break;
+			case shutdown_state:
+				state_change(idle_state);
+				break;
+
+			case idle_state:
+			case poweroff_state:
+			case unknown_state:
+			default: break;
+			}
 		}
+
+		/*
+		 * Off
+		 */
+		else {
+			switch (data.state) {
+			case idle_state:
+				state_change(shutdown_state);
+				break;
+
+			case boot_state:
+			case shutdown_state:
+			case poweroff_state:
+			case unknown_state:
+			default: break;
+			}
+		}
+	}
 
 	/*
-	 * Power Button Pressed
+	 * Power Button
 	 */
-	if (ISSET(pin_change, RPI_USR) && ISCLR(PINB, RPI_USR))
-		switch (data.state) {
-		case idle_state:
-			state_change(shutdown_state);
-			break;
+	if (ISSET(pin_change, RPI_USR)) {
+		/*
+		 * Released
+		 */
+		if (ISCLR(PINB, RPI_USR))
+			switch (data.state) {
+			case idle_state:
+				state_change(shutdown_state);
+				break;
 
-		case poweroff_state:
-			state_change(boot_state);
-			break;
+			case poweroff_state:
+				state_change(boot_state);
+				break;
 
-		case boot_state:
-		case shutdown_state:
-		case unknown_state:
-		default: break;
-		}
+			case boot_state:
+			case shutdown_state:
+			case unknown_state:
+			default: break;
+			}
+	}
 }
 

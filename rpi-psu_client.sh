@@ -38,6 +38,13 @@
 #
 ###############################################################################
 
+cleanup()
+{
+    echo "1" > /sys/class/gpio/gpio${RPI_READY}/value
+    echo ${RPI_READY} > /sys/class/gpio/unexport
+    echo ${RPI_SHUTDOWN} > /sys/class/gpio/unexport
+}
+
 # Pin defs
 RPI_SHUTDOWN=23
 RPI_READY=24
@@ -49,12 +56,18 @@ echo "in"  > /sys/class/gpio/gpio${RPI_SHUTDOWN}/direction
 # RPI Ready Pin
 echo ${RPI_READY} > /sys/class/gpio/export
 echo "out" > /sys/class/gpio/gpio${RPI_READY}/direction
-echo "1" > /sys/class/gpio/gpio${RPI_READY}/value
+echo "0" > /sys/class/gpio/gpio${RPI_READY}/value
+
+# Traps
+trap 'cleanup; exit' SIGHUP SIGINT SIGTERM SIGQUIT
 
 # Wait for shutdown signal
 while [ `cat /sys/class/gpio/gpio${RPI_SHUTDOWN}/value` -lt 1 ]; do
 	sleep 1
 done
+
+# Clean up
+cleanup
 
 # Shutdown RPI
 shutdown -Ph now || poweroff

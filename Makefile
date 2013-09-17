@@ -8,11 +8,12 @@ CC      := avr-gcc
 OBJCOPY := avr-objcopy
 AVRDUDE := avrdude
 
-#CLOCK  := 8000000UL
-CLOCK   := 1000000UL
-CFLAGS  := -Os -ffunction-sections -fdata-sections -mmcu=attiny85 -DF_CPU=$(CLOCK) -I$(BASE)
-LDFLAGS := -Os -Wl,--gc-sections -mmcu=attiny85 -lm
-ADFLAGS := -p t85 -c avrisp2 -P usb -v
+#CLOCK   := 8000000UL
+CLOCK    := 1000000UL
+REVISION := 2
+CFLAGS   := -Os -ffunction-sections -fdata-sections -mmcu=attiny85 -DF_CPU=$(CLOCK) -DREVISION=$(REVISION) -I$(BASE)
+LDFLAGS  := -Os -Wl,--gc-sections -mmcu=attiny85 -lm
+ADFLAGS  := -p t85 -c avrisp2 -P usb -v
 
 all: $(TARGET).hex $(TARGET).eep.hex
 	@true

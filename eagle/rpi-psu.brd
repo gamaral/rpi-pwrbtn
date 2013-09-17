@@ -135,7 +135,7 @@
 <text x="31.75" y="15.875" size="1.27" layer="25" ratio="15" align="center">^_^</text>
 <text x="6.35" y="24.765" size="1.016" layer="25" ratio="10" rot="R180" align="center">TIP125</text>
 <text x="37.719" y="35.56" size="1.016" layer="25" ratio="10" rot="R90" align="center">LD33V</text>
-<text x="19.05" y="29.972" size="0.6096" layer="21" ratio="20" align="center">EBC</text>
+<text x="19.05" y="26.162" size="0.6096" layer="21" ratio="20" align="center">E B C</text>
 </plain>
 <libraries>
 <library name="resistor">
@@ -1744,26 +1744,23 @@ grid 2.54 mm</description>
 <description>&lt;b&gt;Transistors&lt;/b&gt;&lt;p&gt;
 &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
 <packages>
-<package name="TO92-EBC">
-<description>&lt;b&gt;TO-92&lt;/b&gt; Pads In Line E B C from top&lt;p&gt;</description>
-<wire x1="-2.095" y1="-2.921" x2="2.095" y2="-2.921" width="0.127" layer="21"/>
-<wire x1="-2.413" y1="-0.1341" x2="2.413" y2="-0.1341" width="0.127" layer="21" curve="-129.583"/>
-<wire x1="1.136" y1="-1.397" x2="-1.136" y2="-1.397" width="0.127" layer="51"/>
-<wire x1="-2.413" y1="-0.1341" x2="-2.664" y2="-1.397" width="0.127" layer="51" curve="27.9376"/>
-<wire x1="-2.664" y1="-1.397" x2="-2.413" y2="-2.4059" width="0.127" layer="51" curve="22.4788"/>
-<wire x1="-1.404" y1="-1.397" x2="-2.664" y2="-1.397" width="0.127" layer="51"/>
-<wire x1="-2.4135" y1="-2.4059" x2="-2.095" y2="-2.921" width="0.127" layer="21" curve="13.0385"/>
-<wire x1="-1.136" y1="-1.397" x2="-1.404" y2="-1.397" width="0.127" layer="21"/>
-<wire x1="2.413" y1="-2.4059" x2="2.664" y2="-1.397" width="0.127" layer="51" curve="22.4788"/>
-<wire x1="2.664" y1="-1.397" x2="2.413" y2="-0.1341" width="0.127" layer="51" curve="27.9376"/>
-<wire x1="2.664" y1="-1.397" x2="1.404" y2="-1.397" width="0.127" layer="51"/>
-<wire x1="1.404" y1="-1.397" x2="1.136" y2="-1.397" width="0.127" layer="21"/>
-<wire x1="2.095" y1="-2.921" x2="2.4247" y2="-2.3818" width="0.127" layer="21" curve="13.6094"/>
-<pad name="C" x="2.54" y="-1.27" drill="0.8128" shape="long" rot="R90"/>
-<pad name="E" x="-2.54" y="-1.27" drill="0.8128" shape="long" rot="R90"/>
-<pad name="B" x="0" y="-1.27" drill="0.8128" shape="long" rot="R90"/>
-<text x="-2.54" y="1.778" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-2.54" y="-4.572" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<package name="TO92">
+<description>&lt;b&gt;TO 92&lt;/b&gt;</description>
+<wire x1="-2.0946" y1="-1.651" x2="-2.6549" y2="-0.254" width="0.127" layer="21" curve="-32.781"/>
+<wire x1="-2.6549" y1="-0.254" x2="-0.7863" y2="2.5485" width="0.127" layer="21" curve="-78.3185"/>
+<wire x1="0.7863" y1="2.5484" x2="2.0945" y2="-1.651" width="0.127" layer="21" curve="-111.1"/>
+<wire x1="-2.0945" y1="-1.651" x2="2.0945" y2="-1.651" width="0.127" layer="21"/>
+<wire x1="-2.2537" y1="-0.254" x2="-0.2863" y2="-0.254" width="0.127" layer="51"/>
+<wire x1="-2.6549" y1="-0.254" x2="-2.2537" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="-0.2863" y1="-0.254" x2="0.2863" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="2.2537" y1="-0.254" x2="2.6549" y2="-0.254" width="0.127" layer="21"/>
+<wire x1="0.2863" y1="-0.254" x2="2.2537" y2="-0.254" width="0.127" layer="51"/>
+<wire x1="-0.7863" y1="2.5485" x2="0.7863" y2="2.5485" width="0.127" layer="51" curve="-34.2936"/>
+<pad name="1" x="1.27" y="0" drill="0.8128" shape="octagon"/>
+<pad name="2" x="0" y="1.905" drill="0.8128" shape="octagon"/>
+<pad name="3" x="-1.27" y="0" drill="0.8128" shape="octagon"/>
+<text x="3.175" y="0.635" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="3.175" y="-1.27" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 </package>
 </packages>
 </library>
@@ -1776,7 +1773,7 @@ grid 2.54 mm</description>
 <class number="0" name="default" width="0" drill="0">
 </class>
 </classes>
-<designrules name="LaenPCBOrder *">
+<designrules name="LaenPCBOrder">
 <description language="de">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
 &lt;p&gt;
 Die Standard-Design-Rules sind so gewählt, dass sie für 
@@ -1849,7 +1846,7 @@ Please make sure your boards conform to these design rules.</description>
 <param name="dpMaxLengthDifference" value="10mm"/>
 <param name="dpGapFactor" value="2.5"/>
 <param name="checkGrid" value="0"/>
-<param name="checkAngle" value="1"/>
+<param name="checkAngle" value="0"/>
 <param name="checkFont" value="1"/>
 <param name="checkRestrict" value="1"/>
 <param name="useDiameter" value="13"/>
@@ -1978,7 +1975,7 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="OC_FARNELL" value="176432" x="41.91" y="13.97" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="VALUE" x="36.83" y="17.018" size="1.27" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="R2" library="resistor" package="0207/10" value="330R" x="36.83" y="27.686" smashed="yes">
+<element name="R2" library="resistor" package="0207/10" value="100R" x="36.83" y="27.686" smashed="yes">
 <attribute name="VALUE" x="36.83" y="27.686" size="1.27" layer="25" ratio="10" align="center"/>
 </element>
 <element name="STATUS-LED" library="led" package="LED5MM" value="" x="41.91" y="22.86" smashed="yes" rot="R270">
@@ -1988,7 +1985,7 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="VALUE" x="2.54" y="-0.635" size="1.27" layer="27"/>
 </element>
 <element name="Q1" library="transistor-power" package="TO220AH" value="TIP125" x="6.35" y="16.51" smashed="yes"/>
-<element name="T1" library="transistor" package="TO92-EBC" value="2N2222A" x="19.05" y="29.21" smashed="yes"/>
+<element name="T1" library="transistor" package="TO92" value="P2N2222AG" x="19.05" y="27.178" smashed="yes"/>
 <element name="R3" library="resistor" package="0207/10" value="240k" x="19.05" y="12.446" smashed="yes" rot="R180">
 <attribute name="VALUE" x="19.05" y="12.446" size="1.27" layer="25" ratio="10" rot="R180" align="center"/>
 </element>
@@ -2027,7 +2024,7 @@ Please make sure your boards conform to these design rules.</description>
 <contactref element="IC2" pad="4"/>
 <contactref element="C3" pad="2"/>
 <contactref element="ICSP" pad="6"/>
-<contactref element="T1" pad="E"/>
+<contactref element="T1" pad="3"/>
 <contactref element="RPI" pad="6"/>
 <contactref element="RPI" pad="14"/>
 <contactref element="RPI" pad="20"/>
@@ -2238,10 +2235,10 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="19.4296875" y1="15.59335" x2="19.88533125" y2="14.49333125" width="0.254" layer="1"/>
 </signal>
 <signal name="N$5">
-<contactref element="T1" pad="B"/>
+<contactref element="T1" pad="2"/>
 <contactref element="R3" pad="2"/>
 <wire x1="15.24" y1="17.78" x2="19.05" y2="21.59" width="0.254" layer="1"/>
-<wire x1="19.05" y1="21.59" x2="19.05" y2="27.94" width="0.254" layer="1"/>
+<wire x1="19.05" y1="21.59" x2="19.05" y2="29.083" width="0.254" layer="1"/>
 <contactref element="R4" pad="2"/>
 <wire x1="15.24" y1="17.78" x2="15.24" y2="16.51" width="0.254" layer="1"/>
 <wire x1="15.24" y1="16.51" x2="13.97" y2="15.24" width="0.254" layer="1"/>
@@ -2262,9 +2259,9 @@ Please make sure your boards conform to these design rules.</description>
 </signal>
 <signal name="N$6">
 <contactref element="R5" pad="1"/>
-<contactref element="T1" pad="C"/>
-<wire x1="24.13" y1="23.622" x2="24.13" y2="25.4" width="0.3048" layer="16"/>
-<wire x1="24.13" y1="25.4" x2="21.59" y2="27.94" width="0.3048" layer="16"/>
+<contactref element="T1" pad="1"/>
+<wire x1="24.13" y1="23.622" x2="20.574" y2="27.178" width="0.3048" layer="16"/>
+<wire x1="20.574" y1="27.178" x2="20.32" y2="27.178" width="0.3048" layer="16"/>
 </signal>
 <signal name="HS2">
 <polygon width="0.254" layer="1">
