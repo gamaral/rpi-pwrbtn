@@ -13636,7 +13636,7 @@ grid 2.54 mm</description>
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
 <part name="SJ1" library="gamaral" deviceset="SJ-BRIDGED" device=""/>
 <part name="SW1" library="switch-omron" deviceset="10-XX" device=""/>
-<part name="R2" library="resistor" deviceset="R-EU_" device="0207/10" value="100R"/>
+<part name="R2" library="resistor" deviceset="R-EU_" device="0207/10"/>
 <part name="STATUS-LED" library="led" deviceset="LED" device="5MM"/>
 <part name="RPI" library="pinhead" deviceset="PINHD-2X13" device=""/>
 <part name="Q1" library="transistor-power" deviceset="TIP125" device=""/>
@@ -14016,7 +14016,8 @@ grid 2.54 mm</description>
 <approved hash="113,1,191.728,100.461,ICSP,,,,,"/>
 <approved hash="113,1,205.74,103.116,SJ1,,,,,"/>
 <approved hash="113,1,124.46,146.931,SW1,,,,,"/>
-<approved hash="113,1,197.046,71.065,STATUS-LED,,,,,"/>
+<approved hash="113,1,184.15,74.6548,R2,,,,,"/>
+<approved hash="113,1,197.273,71.065,STATUS-LED,,,,,"/>
 <approved hash="113,1,85.0477,52.2012,RPI,,,,,"/>
 </errors>
 </schematic>
