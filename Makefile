@@ -10,7 +10,7 @@ AVRDUDE := avrdude
 
 #CLOCK   := 8000000UL
 CLOCK    := 1000000UL
-REVISION := 2
+REVISION := 3
 CFLAGS   := -Os -ffunction-sections -fdata-sections -mmcu=attiny85 -DF_CPU=$(CLOCK) -DREVISION=$(REVISION) -I$(BASE)
 LDFLAGS  := -Os -Wl,--gc-sections -mmcu=attiny85 -lm
 ADFLAGS  := -p t85 -c avrisp2 -P usb -v

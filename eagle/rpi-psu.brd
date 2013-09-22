@@ -1995,10 +1995,10 @@ Please make sure your boards conform to these design rules.</description>
 <element name="R6" library="resistor" package="0207/10" value="62k" x="19.05" y="20.828" smashed="yes">
 <attribute name="VALUE" x="19.05" y="20.828" size="1.27" layer="25" ratio="10" align="center"/>
 </element>
-<element name="R7" library="resistor" package="0207/10" value="10k" x="19.05" y="9.652" smashed="yes" rot="R180">
+<element name="R7" library="resistor" package="0207/10" value="1M" x="19.05" y="9.652" smashed="yes" rot="R180">
 <attribute name="VALUE" x="19.05" y="9.652" size="1.27" layer="25" ratio="10" rot="R180" align="center"/>
 </element>
-<element name="R4" library="resistor" package="0207/10" value="10k" x="19.05" y="15.24" smashed="yes" rot="R180">
+<element name="R4" library="resistor" package="0207/10" value="1M" x="19.05" y="15.24" smashed="yes" rot="R180">
 <attribute name="VALUE" x="19.05" y="15.24" size="1.27" layer="25" ratio="10" rot="R180" align="center"/>
 </element>
 </elements>
