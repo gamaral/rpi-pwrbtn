@@ -12,7 +12,7 @@
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
@@ -41,7 +41,7 @@
 <layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
@@ -2013,7 +2013,7 @@ Please make sure your boards conform to these design rules.</description>
 </elements>
 <signals>
 <signal name="GND">
-<polygon width="0.4064" layer="1" isolate="0.4064" thermals="no" rank="2">
+<polygon width="0.4064" layer="1" isolate="0.4064" rank="2">
 <vertex x="0" y="41.91"/>
 <vertex x="48.26" y="41.91"/>
 <vertex x="48.26" y="0"/>
@@ -2024,7 +2024,7 @@ Please make sure your boards conform to these design rules.</description>
 <contactref element="C1" pad="2"/>
 <contactref element="C2" pad="-"/>
 <contactref element="J1" pad="2"/>
-<polygon width="0.4064" layer="16" isolate="0.4064" thermals="no" rank="2">
+<polygon width="0.4064" layer="16" isolate="0.4064" rank="2">
 <vertex x="0" y="41.91"/>
 <vertex x="48.26" y="41.91"/>
 <vertex x="48.26" y="0"/>
@@ -2066,12 +2066,13 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="15.24" y1="19.304" x2="15.24" y2="32.385" width="0.254" layer="1"/>
 <wire x1="34.29" y1="23.368" x2="34.29" y2="20.955" width="0.4064" layer="1"/>
 <wire x1="34.29" y1="20.955" x2="35.56" y2="19.685" width="0.4064" layer="1"/>
-<wire x1="29.845" y1="25.4" x2="24.13" y2="31.115" width="0.4064" layer="1"/>
+<wire x1="29.845" y1="25.4" x2="27.559" y2="27.686" width="0.4064" layer="1"/>
+<wire x1="25.7175" y1="29.5275" x2="24.13" y2="31.115" width="0.4064" layer="1"/>
 <wire x1="34.29" y1="23.368" x2="34.29" y2="24.13" width="0.4064" layer="1"/>
 <wire x1="34.29" y1="24.13" x2="33.02" y2="25.4" width="0.4064" layer="1"/>
-<wire x1="33.02" y1="25.4" x2="31.75" y2="25.4" width="0.4064" layer="1"/>
-<wire x1="31.75" y1="25.4" x2="29.845" y2="25.4" width="0.4064" layer="1"/>
-<wire x1="31.75" y1="27.686" x2="31.75" y2="25.4" width="0.4064" layer="1"/>
+<wire x1="33.02" y1="25.4" x2="29.845" y2="25.4" width="0.4064" layer="1"/>
+<wire x1="31.75" y1="27.686" x2="27.559" y2="27.686" width="0.4064" layer="1"/>
+<wire x1="27.559" y1="27.686" x2="25.7175" y2="29.5275" width="0.4064" layer="1"/>
 </signal>
 <signal name="RESET">
 <contactref element="R1" pad="2"/>
