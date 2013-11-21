@@ -36,6 +36,11 @@
 # chmod 700 /usr/local/bin/rpi-psu_client.sh
 # echo "null::once:/root/rpi-psu_client.sh" >> /etc/inittab
 #
+## UBUNTU USERS ###############################################################
+#
+# Since ubuntu points /bin/sh to Dash, you will need to replace the top line
+# from #!/bin/sh to #!/bin/bash or trap won't work.
+#
 ###############################################################################
 
 cleanup()
